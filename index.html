@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오스트리아 가이드 외부 견학 아틀라스 | AUSTRIA GUIDE Exkursions-Atlas</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇦🇹</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet CSS (Local with CDN fallback) -->
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Top Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-badge">
+        <span class="flag">🇦🇹</span>
+        <div class="logo-text">
+          <div class="brand-title" data-i18n="brand_title">AUSTRIA GUIDE <span>Exkursions-Atlas</span></div>
+          <div class="brand-sub" data-i18n="brand_sub">WIFI Steiermark Fremdenführer • 가이드 외부 견학 & 경로 지도</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-stats">
+      <div class="stat-item">
+        <i class="fa-solid fa-route"></i>
+        <div>
+          <span class="stat-val">5개</span>
+          <span class="stat-lbl" data-i18n="stat_courses">견학 코스</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <i class="fa-solid fa-map-pin"></i>
+        <div>
+          <span class="stat-val">42개소</span>
+          <span class="stat-lbl" data-i18n="stat_stops">방문 장소</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <i class="fa-solid fa-bus"></i>
+        <div>
+          <span class="stat-val">975 km</span>
+          <span class="stat-lbl" data-i18n="stat_distance">총 이동거리</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Search Input -->
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="장소, 도시, 키워드 검색... (예: 피버, 훈데르트바서, Hofburg)">
+        <button id="clearSearchBtn" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Language Toggle -->
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="ko">KO</button>
+        <button class="lang-btn" data-lang="de">DE</button>
+      </div>
+
+      <!-- Overview Info Modal Button -->
+      <button id="aboutBtn" class="icon-btn" title="견학 정보 요약">
+        <i class="fa-solid fa-circle-info"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <!-- Course Navigation Tabs -->
+      <nav class="course-tabs" id="courseTabs">
+        <button class="tab-btn active" data-course="all">
+          <i class="fa-solid fa-globe"></i>
+          <span data-i18n="tab_all">전체 코스</span>
+        </button>
+        <button class="tab-btn" data-course="ex01">
+          <span class="tab-dot" style="background:#2563EB;"></span>
+          <span>EX 01 서부</span>
+        </button>
+        <button class="tab-btn" data-course="ex02">
+          <span class="tab-dot" style="background:#DC2626;"></span>
+          <span>EX 02 비엔나</span>
+        </button>
+        <button class="tab-btn" data-course="ex03">
+          <span class="tab-dot" style="background:#059669;"></span>
+          <span>EX 03 북부</span>
+        </button>
+        <button class="tab-btn" data-course="ex04">
+          <span class="tab-dot" style="background:#7C3AED;"></span>
+          <span>EX 04 동부</span>
+        </button>
+        <button class="tab-btn" data-course="ex05">
+          <span class="tab-dot" style="background:#D97706;"></span>
+          <span>EX 05 남부</span>
+        </button>
+      </nav>
+
+      <!-- Active Course Summary Card -->
+      <div class="course-summary-card" id="courseSummaryCard">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills-wrap">
+        <div class="filter-label"><i class="fa-solid fa-filter"></i> <span data-i18n="filter_lbl">유형별 필터</span></div>
+        <div class="filter-pills" id="filterPills">
+          <button class="pill-btn active" data-cat="all" data-i18n="cat_all">전체</button>
+          <button class="pill-btn" data-cat="castle" data-i18n="cat_castle">성채/궁전</button>
+          <button class="pill-btn" data-cat="church" data-i18n="cat_church">성당/수도원</button>
+          <button class="pill-btn" data-cat="culture" data-i18n="cat_culture">역사/문화</button>
+          <button class="pill-btn" data-cat="gastronomy" data-i18n="cat_gastronomy">미식/와인</button>
+          <button class="pill-btn" data-cat="route" data-i18n="cat_route">가도/풍경</button>
+          <button class="pill-btn" data-cat="walk" data-i18n="cat_walk">도보투어</button>
+        </div>
+      </div>
+
+      <!-- Timeline List -->
+      <div class="timeline-container">
+        <div class="timeline-header">
+          <span id="timelineCountText">총 41개 방문지</span>
+          <button id="collapseAllBtn" class="text-btn" data-i18n="collapse_all">모두 접기</button>
+        </div>
+        <div class="timeline-list" id="timelineList">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Map Viewport -->
+    <main class="app-map-area">
+      <div id="map"></div>
+
+      <!-- Map Floating Controls -->
+      <div class="map-floating-panel top-right">
+        <!-- Map Layer Switcher (100% Free OpenSource, No API Key, No Block) -->
+        <div class="map-style-switch">
+          <button class="style-btn active" data-layer="hot" title="밝고 가독성 높은 오픈 지도 (추천)"><i class="fa-solid fa-sun"></i> 밝은 지도 (HOT)</button>
+          <button class="style-btn" data-layer="esri" title="정밀 도로망 지도 (Esri)"><i class="fa-solid fa-road"></i> 상세 도로망</button>
+          <button class="style-btn" data-layer="topo" title="등고선 지형도 (OpenTopoMap)"><i class="fa-solid fa-mountain"></i> 지형도 (Topo)</button>
+        </div>
+
+        <!-- Fit Bounds Button -->
+        <button id="fitBoundsBtn" class="floating-btn" title="현재 코스 전체 보기">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+
+      <!-- Course Legend (Bottom Left) -->
+      <div class="map-legend" id="mapLegend">
+        <div class="legend-title" data-i18n="legend_title">견학 코스 범례</div>
+        <div class="legend-items">
+          <div class="legend-item" data-course="ex01">
+            <span class="legend-line" style="background:#2563EB;"></span>
+            <span class="legend-txt" data-i18n="legend_ex01">EX 01 서부 슈타이어마르크</span>
+          </div>
+          <div class="legend-item" data-course="ex02">
+            <span class="legend-line" style="background:#DC2626;"></span>
+            <span class="legend-txt" data-i18n="legend_ex02">EX 02 연방수도 비엔나</span>
+          </div>
+          <div class="legend-item" data-course="ex03">
+            <span class="legend-line" style="background:#059669;"></span>
+            <span class="legend-txt" data-i18n="legend_ex03">EX 03 그라츠 북부 근교</span>
+          </div>
+          <div class="legend-item" data-course="ex04">
+            <span class="legend-line" style="background:#7C3AED;"></span>
+            <span class="legend-txt" data-i18n="legend_ex04">EX 04 동부 성채 & 사과가도</span>
+          </div>
+          <div class="legend-item" data-course="ex05">
+            <span class="legend-line" style="background:#D97706;"></span>
+            <span class="legend-txt" data-i18n="legend_ex05">EX 05 남부 와인랜드 & 수료</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Sidebar Toggle -->
+      <button id="mobileSidebarToggle" class="mobile-toggle-btn">
+        <i class="fa-solid fa-list-ul"></i>
+        <span data-i18n="list_view">일정 목록 보기</span>
+      </button>
+    </main>
+
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div id="imageModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-box image-modal-box">
+      <button class="modal-close-btn" id="closeImageModal">&times;</button>
+      <img id="lightboxImg" src="" alt="확대 이미지">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <!-- About / Overview Modal -->
+  <div id="aboutModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-box about-modal-box">
+      <button class="modal-close-btn" id="closeAboutModal">&times;</button>
+      <div class="about-header">
+        <span class="about-icon">🇦🇹</span>
+        <h2>WIFI Steiermark AUSTRIA GUIDE 과정</h2>
+        <p class="about-subtitle">Führungspraxis inkl. Exkursionen, Lehrführungen & Stadtrundgänge</p>
+      </div>
+      <div class="about-content">
+        <div class="about-section">
+          <h3>📌 외부 견학(Exkursionen)의 목적과 중요성</h3>
+          <p>
+            오스트리아 국가공인 외국인안내사(AUSTRIA GUIDE) 자격 취득을 위해 진행된 현장 중심 실습 과정입니다.
+            슈타이어마르크의 지리적·역사적 주요 거점(서부, 북부, 동부, 남부)과 연방수도 비엔나를 직접 방문하여,
+            <strong>차내 버스 가이드 스피치 기법</strong>, <strong>도보 인솔 테크닉</strong>, <strong>명소별 핵심 역사·건축 도상학 해설</strong>을 체계적으로 훈련했습니다.
+          </p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card">
+            <h4><span style="color:#2563EB;">●</span> EX 01 서부</h4>
+            <div class="ac-date">2025.10.18 (토)</div>
+            <p>피버 종마목장, 훈데르트바서 성당, 실허 와인가도, 슈타인츠 성 & 플라셔를축</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#DC2626;">●</span> EX 02 비엔나</h4>
+            <div class="ac-date">2026.05.30 (토)</div>
+            <p>13구간 고속도로 릴레이 가이드, 링슈트라세, 벨베데레, 슈테판 대성당 내부, 호프부르크, 페어히톨츠도르프 호이리게</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#059669;">●</span> EX 03 북부</h4>
+            <div class="ac-date">2026.06.20 (토)</div>
+            <p>프론라이텐 무르산책로, 라인 시토회 수도원, 슈튀빙 오스트리아 야외박물관, 마리아 슈트라센겔 고딕성당</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#7C3AED;">●</span> EX 04 동부</h4>
+            <div class="ac-date">2026.09.26 (토)</div>
+            <p>사과가도 푸흐 마을, 헤르버슈타인 정원성 & 동물원, 리거스부르크 암벽요새 마녀박물관 & 7개 성문 하산길</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#D97706;">●</span> EX 05 남부</h4>
+            <div class="ac-date">2026.10.24 (토)</div>
+            <p>호박씨기름 방앗간, 질버베르크 와인학교 셀러 테이스팅, 제카우 성 300년 셀러, 슬로베니아 국경테이블, 학-게벨 수료 기념연</p>
+          </div>
+        </div>
+        <div class="about-footer">
+          <div><strong>주관:</strong> WIFI Steiermark (Wirtschaftskammer Steiermark)</div>
+          <div><strong>지도 교수/인솔:</strong> Maga. Sonja Piro, Mag. Hannes Portugaller, Mag. David Zottler, Mag. Bernhard Zorko</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS (Local with fallback) -->
+  <script src="assets/vendor/leaflet/leaflet.js"></script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
+  
+  <!-- App Data & Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSTRIA GUIDE Exkursions-Atlas | WIFI Steiermark Fremdenführer</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇦🇹</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet CSS (Local with CDN fallback) -->
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Top Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-badge">
+        <span class="flag">🇦🇹</span>
+        <div class="logo-text">
+          <div class="brand-title" data-i18n="brand_title">AUSTRIA GUIDE <span>Exkursions-Atlas</span></div>
+          <div class="brand-sub" data-i18n="brand_sub">WIFI Steiermark Fremdenführer-Ausbildung • Routen & Standorte</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-stats">
+      <div class="stat-item">
+        <i class="fa-solid fa-route"></i>
+        <div>
+          <span class="stat-val">5</span>
+          <span class="stat-lbl" data-i18n="stat_courses">Exkursionen</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <i class="fa-solid fa-map-pin"></i>
+        <div>
+          <span class="stat-val">42</span>
+          <span class="stat-lbl" data-i18n="stat_stops">Standorte</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <i class="fa-solid fa-bus"></i>
+        <div>
+          <span class="stat-val">975 km</span>
+          <span class="stat-lbl" data-i18n="stat_distance">Gesamtstrecke</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Search Input -->
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Orte, Städte, Stichwörter suchen... (z.B. Piber, Hundertwasser, Hofburg)">
+        <button id="clearSearchBtn" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Language Toggle -->
+      <div class="lang-switch">
+        <button class="lang-btn" data-lang="ko">KO</button>
+        <button class="lang-btn active" data-lang="de">DE</button>
+      </div>
+
+      <!-- Overview Info Modal Button -->
+      <button id="aboutBtn" class="icon-btn" title="Exkursions-Informationen">
+        <i class="fa-solid fa-circle-info"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <!-- Course Navigation Tabs -->
+      <nav class="course-tabs" id="courseTabs">
+        <button class="tab-btn active" data-course="all">
+          <i class="fa-solid fa-globe"></i>
+          <span data-i18n="tab_all">Alle Touren</span>
+        </button>
+        <button class="tab-btn" data-course="ex01">
+          <span class="tab-dot" style="background:#2563EB;"></span>
+          <span data-i18n="tab_ex01">EX 01 Weststmk.</span>
+        </button>
+        <button class="tab-btn" data-course="ex02">
+          <span class="tab-dot" style="background:#DC2626;"></span>
+          <span data-i18n="tab_ex02">EX 02 Wien</span>
+        </button>
+        <button class="tab-btn" data-course="ex03">
+          <span class="tab-dot" style="background:#059669;"></span>
+          <span data-i18n="tab_ex03">EX 03 Nordstmk.</span>
+        </button>
+        <button class="tab-btn" data-course="ex04">
+          <span class="tab-dot" style="background:#7C3AED;"></span>
+          <span data-i18n="tab_ex04">EX 04 Oststmk.</span>
+        </button>
+        <button class="tab-btn" data-course="ex05">
+          <span class="tab-dot" style="background:#D97706;"></span>
+          <span data-i18n="tab_ex05">EX 05 Südstmk.</span>
+        </button>
+      </nav>
+
+      <!-- Active Course Summary Card -->
+      <div class="course-summary-card" id="courseSummaryCard">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills-wrap">
+        <div class="filter-label"><i class="fa-solid fa-filter"></i> <span data-i18n="filter_lbl">Kategorie-Filter</span></div>
+        <div class="filter-pills" id="filterPills">
+          <button class="pill-btn active" data-cat="all" data-i18n="cat_all">Alle</button>
+          <button class="pill-btn" data-cat="castle" data-i18n="cat_castle">Schlösser & Burgen</button>
+          <button class="pill-btn" data-cat="church" data-i18n="cat_church">Kirchen & Stifte</button>
+          <button class="pill-btn" data-cat="culture" data-i18n="cat_culture">Kultur & Handwerk</button>
+          <button class="pill-btn" data-cat="gastronomy" data-i18n="cat_gastronomy">Kulinarik & Wein</button>
+          <button class="pill-btn" data-cat="route" data-i18n="cat_route">Routen & Panorama</button>
+          <button class="pill-btn" data-cat="walk" data-i18n="cat_walk">Stadtrundgänge</button>
+        </div>
+      </div>
+
+      <!-- Timeline List -->
+      <div class="timeline-container">
+        <div class="timeline-header">
+          <span id="timelineCountText">42 Standorte insgesamt</span>
+          <button id="collapseAllBtn" class="text-btn" data-i18n="collapse_all">Alles einklappen</button>
+        </div>
+        <div class="timeline-list" id="timelineList">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Map Viewport -->
+    <main class="app-map-area">
+      <div id="map"></div>
+
+      <!-- Map Floating Controls -->
+      <div class="map-floating-panel top-right">
+        <!-- Map Layer Switcher (100% Free OpenSource, Keine API Keys, Kein Block) -->
+        <div class="map-style-switch">
+          <button class="style-btn active" data-layer="hot" title="Helle und übersichtliche Karte (Empfohlen)"><i class="fa-solid fa-sun"></i> Hell (HOT)</button>
+          <button class="style-btn" data-layer="esri" title="Detaillierte Straßenkarte (Esri)"><i class="fa-solid fa-road"></i> Straßenkarte</button>
+          <button class="style-btn" data-layer="topo" title="Geländekarte Topo (OpenTopoMap)"><i class="fa-solid fa-mountain"></i> Topo</button>
+        </div>
+
+        <!-- Fit Bounds Button -->
+        <button id="fitBoundsBtn" class="floating-btn" title="Gesamte Route anzeigen">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+
+      <!-- Course Legend (Bottom Left) -->
+      <div class="map-legend" id="mapLegend">
+        <div class="legend-title" data-i18n="legend_title">Exkursions-Legende</div>
+        <div class="legend-items">
+          <div class="legend-item" data-course="ex01">
+            <span class="legend-line" style="background:#2563EB;"></span>
+            <span class="legend-txt" data-i18n="legend_ex01">EX 01 Weststeiermark (Lipizzaner & Schilcher)</span>
+          </div>
+          <div class="legend-item" data-course="ex02">
+            <span class="legend-line" style="background:#DC2626;"></span>
+            <span class="legend-txt" data-i18n="legend_ex02">EX 02 Bundeshauptstadt Wien (Ringstraße & Bus)</span>
+          </div>
+          <div class="legend-item" data-course="ex03">
+            <span class="legend-line" style="background:#059669;"></span>
+            <span class="legend-txt" data-i18n="legend_ex03">EX 03 Region Graz-Nord (Rein & Stübing)</span>
+          </div>
+          <div class="legend-item" data-course="ex04">
+            <span class="legend-line" style="background:#7C3AED;"></span>
+            <span class="legend-txt" data-i18n="legend_ex04">EX 04 Oststeiermark (Herberstein & Riegersburg)</span>
+          </div>
+          <div class="legend-item" data-course="ex05">
+            <span class="legend-line" style="background:#D97706;"></span>
+            <span class="legend-txt" data-i18n="legend_ex05">EX 05 Südsteiermark (Weinland & Abschluss)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Sidebar Toggle -->
+      <button id="mobileSidebarToggle" class="mobile-toggle-btn">
+        <i class="fa-solid fa-list-ul"></i>
+        <span data-i18n="list_view">Programm & Orte</span>
+      </button>
+    </main>
+
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div id="imageModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-box image-modal-box">
+      <button class="modal-close-btn" id="closeImageModal">&times;</button>
+      <img id="lightboxImg" src="" alt="Vergrößertes Foto">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <!-- About / Overview Modal -->
+  <div id="aboutModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-box about-modal-box">
+      <button class="modal-close-btn" id="closeAboutModal">&times;</button>
+      <div class="about-header">
+        <span class="about-icon">🇦🇹</span>
+        <h2>WIFI Steiermark AUSTRIA GUIDE Lehrgang</h2>
+        <p class="about-subtitle">Führungspraxis inkl. Exkursionen, Lehrführungen & Stadtrundgänge</p>
+      </div>
+      <div class="about-content">
+        <div class="about-section">
+          <h3>📌 Ziel und Bedeutung der Fachexkursionen</h3>
+          <p>
+            Praxisorientierte Lehr- und Übungsexkursionen zur Erlangung der staatlichen Fremdenführer-Befähigung (AUSTRIA GUIDE).
+            Die Teilnehmer/innen bereisten alle wesentlichen Kulturlandschaften der Steiermark sowie die Bundeshauptstadt Wien
+            und trainierten unter realen Bedingungen: <strong>Busmoderation über das Bordmikrofon</strong>,
+            <strong>Gruppenführung bei Stadtrundgängen</strong> sowie <strong>präzise kunst- und kulturhistorische Fachvermittlung</strong>.
+          </p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card">
+            <h4><span style="color:#2563EB;">●</span> EX 01 Weststeiermark</h4>
+            <div class="ac-date">SA, 18. Oktober 2025</div>
+            <p>Lipizzanergestüt Piber, Hundertwasserkirche Bärnbach, Schilcherweinstraße, Schloss Stainz & Flascherlzug</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#DC2626;">●</span> EX 02 Bundeshauptstadt Wien</h4>
+            <div class="ac-date">SA, 30. Mai 2026</div>
+            <p>13 Streckenabschnitte Autobahnmoderation, Ringstraße, Belvedere, Stephansdom Innenführung, Hofburg, Heuriger Perchtoldsdorf</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#059669;">●</span> EX 03 Region Graz-Nord</h4>
+            <div class="ac-date">SA, 20. Juni 2026</div>
+            <p>Frohnleiten Murpromenade, Stift Rein (ältestes Zisterzienserkloster), ÖFLM Stübing, Wallfahrtskirche Maria Straßengel</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#7C3AED;">●</span> EX 04 Oststeiermark</h4>
+            <div class="ac-date">SA, 26. September 2026</div>
+            <p>Steirische Apfelstraße Puch, Gartenschloss & Tierwelt Herberstein, Burg Riegersburg Hexenmuseum & 7 Tore Abstieg</p>
+          </div>
+          <div class="about-card">
+            <h4><span style="color:#D97706;">●</span> EX 05 Südsteiermark</h4>
+            <div class="ac-date">SA, 24. Oktober 2026</div>
+            <p>Ölmühle Hartlieb, Landes-Weinbauschule Silberberg, Schloss Seggau Weinkeller, Grenztisch Kungota, Abschlussfeier Hack-Gebell</p>
+          </div>
+        </div>
+        <div class="about-footer">
+          <div><strong>Veranstalter:</strong> WIFI Steiermark (Wirtschaftskammer Steiermark)</div>
+          <div><strong>Lehrgangsleitung / Referenten:</strong> Maga. Sonja Piro, Mag. Hannes Portugaller, Mag. David Zottler, Mag. Bernhard Zorko</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS (Local with fallback) -->
+  <script src="assets/vendor/leaflet/leaflet.js"></script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
+  
+  <!-- App Data & Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
