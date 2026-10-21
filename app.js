@@ -53,6 +53,8 @@ const I18N = {
     legend_ex04: 'EX 04 동부 성채 & 사과가도',
     legend_ex05: 'EX 05 남부 와인랜드 & 수료',
     list_view: '일정 목록 보기',
+    mobile_tab_map: '지도 보기',
+    mobile_tab_list: '일정 목록',
     search_placeholder: '장소, 도시, 키워드 검색... (예: 피버, 훈데르트바서, Hofburg)',
     no_results: '일치하는 방문지가 없습니다.',
     homework_lbl: '과제(HÜ) & 이수:',
@@ -107,6 +109,8 @@ const I18N = {
     legend_ex04: 'EX 04 Oststeiermark (Herberstein & Riegersburg)',
     legend_ex05: 'EX 05 Südsteiermark (Weinland & Abschluss)',
     list_view: 'Programm & Orte',
+    mobile_tab_map: 'Karte',
+    mobile_tab_list: 'Programm',
     search_placeholder: 'Orte, Städte, Stichwörter suchen... (z.B. Piber, Hundertwasser, Hofburg)',
     no_results: 'Keine passenden Standorte gefunden.',
     homework_lbl: 'Hausübung (HÜ) & LE-Anrechnung:',
@@ -569,6 +573,11 @@ function selectSpot(courseId, stepNumber, zoomMap = true) {
     targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  // On mobile screens, auto switch to map view when viewing on map
+  if (window.innerWidth <= 768 && zoomMap) {
+    switchToMobileView('map');
+  }
+
   // Find marker on map
   const match = spotMarkers.find(m => m.courseId === courseId && m.stop.step === stepNumber);
   if (match) {
@@ -577,9 +586,26 @@ function selectSpot(courseId, stepNumber, zoomMap = true) {
     }
     setTimeout(() => {
       match.marker.openPopup();
-    }, 400);
+    }, 450);
   }
 }
+
+// --- Switch Mobile View Mode ('map' or 'list') ---
+function switchToMobileView(viewName) {
+  document.body.classList.remove('mobile-view-map', 'mobile-view-list');
+  document.body.classList.add(`mobile-view-${viewName}`);
+
+  document.querySelectorAll('.mobile-nav-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.view === viewName);
+  });
+
+  if (viewName === 'map' && map) {
+    setTimeout(() => {
+      map.invalidateSize({ pan: false });
+    }, 100);
+  }
+}
+window.switchToMobileView = switchToMobileView;
 
 // --- Fly directly to spot from button ---
 window.flyToSpot = function(courseId, stepNumber) {
@@ -605,6 +631,15 @@ window.openLightbox = function(imgSrc, caption) {
 
 // --- Setup Event Listeners ---
 function setupEventListeners() {
+  // Mobile Tab Navigation (Map vs List View)
+  const mobileNavTabs = document.querySelectorAll('.mobile-nav-tab');
+  mobileNavTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const view = tab.dataset.view;
+      switchToMobileView(view);
+    });
+  });
+
   // Course Navigation Tabs
   const tabs = document.querySelectorAll('.tab-btn');
   tabs.forEach(tab => {

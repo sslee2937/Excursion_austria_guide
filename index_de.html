@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AUSTRIA GUIDE Exkursions-Atlas | WIFI Steiermark Fremdenführer</title>
   
   <!-- Favicon -->
@@ -22,7 +22,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="mobile-view-map">
   <!-- Header / Top Bar -->
   <header class="app-header">
     <div class="header-left">
@@ -65,14 +65,14 @@
       <!-- Search Input -->
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Orte, Städte, Stichwörter suchen... (z.B. Piber, Hundertwasser, Hofburg)">
+        <input type="text" id="searchInput" placeholder="Orte, Städte, Stichwörter suchen... (z.B. Piber, Stephansdom)">
         <button id="clearSearchBtn" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Language Toggle -->
+      <!-- Language Toggle (DE Primary, KO Secondary) -->
       <div class="lang-switch">
-        <button class="lang-btn" data-lang="ko">KO</button>
         <button class="lang-btn active" data-lang="de">DE</button>
+        <button class="lang-btn" data-lang="ko">KO</button>
       </div>
 
       <!-- Overview Info Modal Button -->
@@ -82,10 +82,22 @@
     </div>
   </header>
 
+  <!-- Mobile View Switcher Tab Bar (Shown only on Mobile/Tablet) -->
+  <div class="mobile-nav-bar" id="mobileNavBar">
+    <button class="mobile-nav-tab active" id="btnMobileMap" data-view="map">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span data-i18n="mobile_tab_map">Karte (지도)</span>
+    </button>
+    <button class="mobile-nav-tab" id="btnMobileList" data-view="list">
+      <i class="fa-solid fa-list-check"></i>
+      <span data-i18n="mobile_tab_list">Programm (일정)</span>
+    </button>
+  </div>
+
   <!-- Main Workspace -->
   <div class="app-layout">
     
-    <!-- Sidebar -->
+    <!-- Sidebar (Schedule & Timeline) -->
     <aside class="app-sidebar" id="appSidebar">
       <!-- Course Navigation Tabs -->
       <nav class="course-tabs" id="courseTabs">
@@ -147,7 +159,7 @@
     </aside>
 
     <!-- Map Viewport -->
-    <main class="app-map-area">
+    <main class="app-map-area" id="mapArea">
       <div id="map"></div>
 
       <!-- Map Floating Controls -->
@@ -191,12 +203,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Mobile Sidebar Toggle -->
-      <button id="mobileSidebarToggle" class="mobile-toggle-btn">
-        <i class="fa-solid fa-list-ul"></i>
-        <span data-i18n="list_view">Programm & Orte</span>
-      </button>
     </main>
 
   </div>
