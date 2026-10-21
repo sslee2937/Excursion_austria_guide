@@ -383,13 +383,18 @@ function renderCourseSummary() {
           <h2 class="summary-title">${t.overview_title}</h2>
           <div class="summary-title-de">${t.overview_sub}</div>
         </div>
+        <button class="summary-collapse-toggle" onclick="toggleSummaryBody()" title="Info ein/ausblenden">
+          <i class="fa-solid fa-chevron-up" id="summaryToggleIcon"></i>
+        </button>
       </div>
-      <p class="summary-desc">${t.overview_desc}</p>
-      <div class="summary-meta-grid">
-        <div class="meta-pill"><i class="fa-solid fa-map-location-dot"></i> <span>${t.meta_regions} <strong>Steiermark & Wien</strong></span></div>
-        <div class="meta-pill"><i class="fa-solid fa-clock"></i> <span>${t.meta_period} <strong>2025.10 ~ 2026.10</strong></span></div>
-        <div class="meta-pill"><i class="fa-solid fa-bus"></i> <span>${t.meta_distance} <strong>ca. 975 km</strong></span></div>
-        <div class="meta-pill"><i class="fa-solid fa-graduation-cap"></i> <span>${t.meta_organizer} <strong>WIFI Steiermark</strong></span></div>
+      <div class="summary-collapsible-body" id="summaryCollapsibleBody">
+        <p class="summary-desc">${t.overview_desc}</p>
+        <div class="summary-meta-grid">
+          <div class="meta-pill"><i class="fa-solid fa-map-location-dot"></i> <span>${t.meta_regions} <strong>Steiermark & Wien</strong></span></div>
+          <div class="meta-pill"><i class="fa-solid fa-clock"></i> <span>${t.meta_period} <strong>2025.10 ~ 2026.10</strong></span></div>
+          <div class="meta-pill"><i class="fa-solid fa-bus"></i> <span>${t.meta_distance} <strong>ca. 975 km</strong></span></div>
+          <div class="meta-pill"><i class="fa-solid fa-graduation-cap"></i> <span>${t.meta_organizer} <strong>WIFI Steiermark</strong></span></div>
+        </div>
       </div>
     `;
     return;
@@ -412,19 +417,37 @@ function renderCourseSummary() {
         <h2 class="summary-title">${title}</h2>
         ${subtitle ? `<div class="summary-title-de">${subtitle}</div>` : ''}
       </div>
+      <button class="summary-collapse-toggle" onclick="toggleSummaryBody()" title="Info ein/ausblenden">
+        <i class="fa-solid fa-chevron-up" id="summaryToggleIcon"></i>
+      </button>
     </div>
-    <p class="summary-desc">${summary}</p>
-    <div class="summary-meta-grid">
-      <div class="meta-pill"><i class="fa-regular fa-calendar"></i> <span>${t.meta_date} <strong>${dateStr}</strong></span></div>
-      <div class="meta-pill"><i class="fa-regular fa-clock"></i> <span>${t.meta_time} <strong>${course.time_range}</strong></span></div>
-      <div class="meta-pill"><i class="fa-solid fa-user-tie"></i> <span>${t.meta_guide} <strong>${course.instructors}</strong></span></div>
-      <div class="meta-pill"><i class="fa-solid fa-route"></i> <span>${t.meta_dist} <strong>ca. ${course.distance_km} km</strong></span></div>
-    </div>
-    <div class="summary-homework">
-      <strong><i class="fa-solid fa-book-bookmark"></i> ${t.homework_lbl}</strong> ${homework}
+    <div class="summary-collapsible-body" id="summaryCollapsibleBody">
+      <p class="summary-desc">${summary}</p>
+      <div class="summary-meta-grid">
+        <div class="meta-pill"><i class="fa-regular fa-calendar"></i> <span>${t.meta_date} <strong>${dateStr}</strong></span></div>
+        <div class="meta-pill"><i class="fa-regular fa-clock"></i> <span>${t.meta_time} <strong>${course.time_range}</strong></span></div>
+        <div class="meta-pill"><i class="fa-solid fa-user-tie"></i> <span>${t.meta_guide} <strong>${course.instructors}</strong></span></div>
+        <div class="meta-pill"><i class="fa-solid fa-route"></i> <span>${t.meta_dist} <strong>ca. ${course.distance_km} km</strong></span></div>
+      </div>
+      <div class="summary-homework">
+        <strong><i class="fa-solid fa-book-bookmark"></i> ${t.homework_lbl}</strong> ${homework}
+      </div>
     </div>
   `;
 }
+
+// --- Toggle Summary Body Collapsing ---
+window.toggleSummaryBody = function() {
+  const body = document.getElementById('summaryCollapsibleBody');
+  const icon = document.getElementById('summaryToggleIcon');
+  if (body) {
+    const isHidden = body.style.display === 'none';
+    body.style.display = isHidden ? 'block' : 'none';
+    if (icon) {
+      icon.className = isHidden ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+    }
+  }
+};
 
 // --- Render Timeline Spot List ---
 function renderTimeline() {
